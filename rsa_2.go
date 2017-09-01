@@ -129,6 +129,7 @@ func RsaDecrypt(ciphertext []byte) ([]byte, error) {
 		return nil, errors.New("private key error!")
 
 	}
+
 	priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
 		fmt.Println(err)

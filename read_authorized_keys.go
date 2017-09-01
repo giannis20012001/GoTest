@@ -22,7 +22,7 @@ import (
 func main() {
 	//Read in public key from file
 	//log.Info("Calling readFileWithReadLine.....................................")
-	line, err := readFileWithReadLine(os.Getenv("HOME") + "/Desktop/authorized_keys")
+	line, err := ReadFileWithReadLine(os.Getenv("HOME") + "/Desktop/authorized_keys")
 	if err == io.EOF {
 		//Do nothing
 
@@ -57,7 +57,7 @@ func main() {
 
 }
 
-func readFileWithReadLine(fn string) (string, error) {
+func ReadFileWithReadLine(fn string) (string, error) {
 	var counter int
 	var line []string
 

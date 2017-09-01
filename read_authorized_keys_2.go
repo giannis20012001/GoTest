@@ -4,14 +4,13 @@ import (
 	"os"
 	"io"
 	"fmt"
-	"bufio"
-	"bytes"
-	"strconv"
+	"encoding/pem"
 	ssh2pem "github.com/ssh-vault/ssh2pem"
 	log "github.com/Sirupsen/logrus"
 
-	"encoding/pem"
-
+	"bufio"
+	"bytes"
+	"strconv"
 )
 
 /**
@@ -44,5 +43,60 @@ func main() {
 
 	//log.Info(string(pem))
 	fmt.Println(string(pem))
+
+}
+
+func readFileWithReadLine(fn string) (string, error) {
+	var counter int
+	var line []string
+
+	file, err := os.Open(fn)
+	defer file.Close()
+
+	if err != nil {
+		return line[0], err
+
+	}
+
+	// Start reading from the file with a reader.
+	reader := bufio.NewReader(file)
+
+	for {
+		var buffer bytes.Buffer
+		var l []byte
+		var isPrefix bool
+
+		for {
+			l, isPrefix, err = reader.ReadLine()
+			buffer.Write(l)
+
+			// If we've reached the end of the line, stop reading.
+			if !isPrefix {
+				break
+			}
+
+			// If we're just at the EOF, break
+			if err != nil {
+				break
+
+			}
+
+		}
+
+		if err == io.EOF {
+			break
+
+		}
+
+		line = append(line, buffer.String())
+		log.Debug("Read " + strconv.Itoa(len(line[counter])) + " characters\n")
+
+		// Process the line here.
+		log.Debug(line[counter])
+		counter++
+
+	}
+
+	return line[0], err
 
 }
