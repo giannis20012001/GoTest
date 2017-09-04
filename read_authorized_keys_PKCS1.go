@@ -11,6 +11,7 @@ import (
 	"bytes"
 	"strconv"
 	"io"
+	"io/ioutil"
 	"fmt"
 	"crypto/x509"
 	"encoding/pem"
@@ -23,6 +24,7 @@ func main() {
 	//Read in public key from file
 	//log.Info("Calling readFileWithReadLine.....................................")
 	line, err := ReadFileWithReadLine(os.Getenv("HOME") + "/Desktop/authorized_keys")
+	//line, err := ReadFileWithReadLine(os.Getenv("HOME") + "/Desktop/ssh_keys/newlumimainkeypair.pub")
 	if err == io.EOF {
 		//Do nothing
 
@@ -47,13 +49,42 @@ func main() {
 	}
 
 	// Encode to PEM format
-	pem := pem.EncodeToMemory(&pem.Block{
+	pemStructPublic := pem.EncodeToMemory(&pem.Block{
 		Type: "RSA PUBLIC KEY",
 		Bytes: pkix,
 	})
 
 	//log.Info(string(pem))
-	fmt.Println(string(pem))
+	fmt.Println(string(pemStructPublic))
+
+	//==================================================================================================================
+	//==================================================================================================================
+	//Read in private key from file
+	bytes, err := ioutil.ReadFile(os.Getenv("HOME") + "/Desktop/ssh_keys/lumimainkeypair.pem")
+	//bytes, err := ioutil.ReadFile(os.Getenv("HOME") + "/Desktop/ssh_keys/newlumimainkeypair.pem")
+	if err != nil { fmt.Printf("%v\n", err); os.Exit(1) }
+
+	// decode PEM encoding to ANS.1 PKCS1 DER
+	block, _ := pem.Decode(bytes)
+	if block == nil { fmt.Printf("No Block found in keyfile\n"); os.Exit(1) }
+	if block.Type != "RSA PRIVATE KEY" { fmt.Printf("Unsupported key type"); os.Exit(1) }
+
+	// parse DER format to a native type
+	key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+
+	// Encode to PEM format
+	pemStructPivate := pem.EncodeToMemory(&pem.Block{
+		Type: "RSA PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(key),
+	})
+
+	fmt.Println(string(pemStructPivate))
+
+	// encode the public key portion of the native key into ssh-rsa format
+	// second parameter is the optional "comment" at the end of the string (usually 'user@host')
+	ssh_rsa, err := ssh.EncodePublicKey(key.PublicKey, "")
+
+	fmt.Printf("%s\n", ssh_rsa)
 
 }
 
