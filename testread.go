@@ -78,58 +78,6 @@ func readFileWithScanner(fn string) (err error) {
 	return
 }
 
-/*func readFileWithReadLine(fn string) (err error) {
-	fmt.Println("readFileWithReadLine")
-
-	file, err := os.Open(fn)
-	defer file.Close()
-
-	if err != nil {
-		return err
-	}
-
-	// Start reading from the file with a reader.
-	reader := bufio.NewReader(file)
-
-	for {
-		var buffer bytes.Buffer
-
-		var l []byte
-		var isPrefix bool
-		for {
-			l, isPrefix, err = reader.ReadLine()
-			buffer.Write(l)
-
-			// If we've reached the end of the line, stop reading.
-			if !isPrefix {
-				break
-			}
-
-			// If we're just at the EOF, break
-			if err != nil {
-				break
-			}
-		}
-
-		if err == io.EOF {
-			break
-		}
-
-		line := buffer.String()
-
-		fmt.Printf(" > Read %d characters\n", len(line))
-
-		// Process the line here.
-		fmt.Println(" > > " + limitLength(line, 50))
-	}
-
-	if err != io.EOF {
-		fmt.Printf(" > Failed!: %v\n", err)
-	}
-
-	return
-}*/
-
 func main() {
 	testLongLines()
 	testLinesThatDoNotFinishWithALinebreak()

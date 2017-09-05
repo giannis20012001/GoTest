@@ -1,4 +1,9 @@
-package main
+package rsa
+
+/**
+ * Created by John Tsantilis
+ * (i [dot] tsantilis [at] yahoo [dot] com A.K.A lumi) on 4/9/2017.
+ */
 
 import (
 	"encoding/pem"
@@ -8,11 +13,6 @@ import (
 	"crypto/rand"
 	"errors"
 )
-
-/**
- * Created by John Tsantilis 
- * (i [dot] tsantilis [at] yahoo [dot] com A.K.A lumi) on 4/9/2017.
- */
 
 func GenerateRsaKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
 	privkey, _ := rsa.GenerateKey(rand.Reader, 2048)

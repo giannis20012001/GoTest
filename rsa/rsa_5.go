@@ -1,4 +1,10 @@
-package main
+package rsa
+
+/**
+ * Created by John Tsantilis
+ * (i [dot] tsantilis [at] yahoo [dot] com A.K.A lumi) on 4/9/2017.
+ */
+
 
 import (
 	"io/ioutil"
@@ -12,14 +18,9 @@ import (
 	"crypto/rand"
 )
 
-/**
- * Created by John Tsantilis 
- * (i [dot] tsantilis [at] yahoo [dot] com A.K.A lumi) on 4/9/2017.
- */
-
 func main() {
 
-	/*var private_key *rsa.PrivateKey
+	var private_key *rsa.PrivateKey
 	var public_key *rsa.PublicKey
 	var plain_text, encrypted, decrypted, label []byte
 	var err error
@@ -47,7 +48,7 @@ func main() {
 	decrypted = decrypt_oaep(private_key, encrypted, label)
 
 	fmt.Printf("OAEP Encrypted [%s] to \n[%x]\n", string(plain_text), encrypted)
-	fmt.Printf("OAEP Decrypted [%x] to \n[%s]\n", encrypted, decrypted)*/
+	fmt.Printf("OAEP Decrypted [%x] to \n[%s]\n", encrypted, decrypted)
 
 	// To use existing private key (Skipping the GenerateKey, Precompute, Validation steps shown above)
 	// This reads pem file and retrieves the public, private key needed to encrypt data
