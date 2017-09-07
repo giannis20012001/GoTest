@@ -1,4 +1,4 @@
-package main
+package Auth0
 
 /**
  * Created by John Tsantilis 
@@ -12,9 +12,9 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/handlers"
-	"github.com/dgrijalva/jwt-go"
-
+	"gopkg.in/dgrijalva/jwt-go.v2"
 	"github.com/auth0/go-jwt-middleware"
+
 )
 
 /* We will first create a new type called Product
@@ -112,9 +112,9 @@ var GetTokenHandler = http.HandlerFunc(
 		claims := token.Claims.(jwt.MapClaims)
 
 		/* Set token claims */
-		claims["admin"] = true
-		claims["name"] = "Ado Kukic"
-		claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+		token.Claims["admin"] = true
+		token.Claims["name"] = "Ado Kukic"
+		token.Claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 
 		/* Sign the token with our secret */
 		tokenString, _ := token.SignedString(mySigningKey)
@@ -131,13 +131,14 @@ func main()  {
 
 	// On the default page we will simply serve our static index page.
 	r.Handle("/", http.FileServer(http.Dir("./views/")))
-	// Our API is going to consist of three routes
+	// Our API is going to consist of four routes
 	// /status - which we will call to make sure that our API is up and running
 	r.Handle("/status", StatusHandler).Methods("GET")
+	/* We will add the middleware to our products and feedback routes. The status route will be publicly accessible */
 	// /products - which will retrieve a list of products that the user can leave feedback on
-	r.Handle("/products", ProductsHandler).Methods("GET")
+	r.Handle("/products", jwtMiddleware.Handler(ProductsHandler)).Methods("GET")
 	// /products/{slug}/feedback - which will capture user feedback on products
-	r.Handle("/products/{slug}/feedback", AddFeedbackHandler).Methods("POST")
+	r.Handle("/products/{slug}/feedback", jwtMiddleware.Handler(AddFeedbackHandler)).Methods("POST")
 	// /get-token - which will generate our jwt token
 	r.Handle("/get-token", GetTokenHandler).Methods("GET")
 	// We will setup our server so we can serve static assest like images, css from the /static/{file} route
