@@ -1,5 +1,10 @@
 package rsa
 
+/**
+ * Created by John Tsantilis
+ * (i [dot] tsantilis [at] yahoo [dot] com A.K.A lumi) on 31/8/2017.
+ */
+
 import (
 	"fmt"
 	"crypto/sha1"
@@ -9,11 +14,6 @@ import (
 	"io"
 	"crypto/rand"
 )
-
-/**
- * Created by John Tsantilis 
- * (i [dot] tsantilis [at] yahoo [dot] com A.K.A lumi) on 31/8/2017.
- */
 
 func main() {
 	// generate private key

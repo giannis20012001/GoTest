@@ -1,14 +1,14 @@
 package main
 
+/**
+ * Created by John Tsantilis
+ * (i [dot] tsantilis [at] yahoo [dot] com A.K.A lumi) on 5/9/2017.
+ */
+ 
 import (
 	"strings"
 	"fmt"
 )
-
-/**
- * Created by John Tsantilis 
- * (i [dot] tsantilis [at] yahoo [dot] com A.K.A lumi) on 5/9/2017.
- */
 
 const ORCHESTRATOR_URI string = "http://arcadia-sc.euprojects.net"
 const CONFIGURATION_API string = "/api/v1/node/%s/config"

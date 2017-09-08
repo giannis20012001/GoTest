@@ -1,6 +1,11 @@
 package rsa
 
-import (
+/**
+ * Created by John Tsantilis
+ * (i [dot] tsantilis [at] yahoo [dot] com A.K.A lumi) on 31/8/2017.
+ */
+
+ import (
 	"math/big"
 	"strconv"
 	"fmt"
@@ -15,11 +20,6 @@ import (
 	b64 "encoding/base64"
 
 )
-
-/**
- * Created by John Tsantilis 
- * (i [dot] tsantilis [at] yahoo [dot] com A.K.A lumi) on 31/8/2017.
- */
 
 /*
 show by command prompt
