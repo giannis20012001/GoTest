@@ -105,8 +105,8 @@ func GetPublicKey(path string) (string, error) {
 
 }
 
-func RsaEncrypt(publicKey rsa.PublicKey, origData []byte) ([]byte, error) {
-	/*block, _ := pem.Decode(publicKey)
+func RsaEncrypt(publicKey []byte, origData []byte) ([]byte, error) {
+	block, _ := pem.Decode(publicKey)
 	if block == nil {
 		err := errors.New("public key error")
 		log.Error(err)
@@ -123,9 +123,9 @@ func RsaEncrypt(publicKey rsa.PublicKey, origData []byte) ([]byte, error) {
 
 	}
 
-	pub := pubInterface.(*rsa.PublicKey)*/
+	pub := pubInterface.(*rsa.PublicKey)
 
-	return rsa.EncryptPKCS1v15(rand.Reader, &publicKey, origData)
+	return rsa.EncryptPKCS1v15(rand.Reader, pub, origData)
 
 }
 
@@ -256,7 +256,7 @@ func readFileWithReadLine(fn string) (string, error) {
 	if err != nil {
 		log.Error(err)
 
-		return line[0], err
+		return line[1], err
 
 	}
 
@@ -301,6 +301,6 @@ func readFileWithReadLine(fn string) (string, error) {
 
 	}
 
-	return line[0], err
+	return line[1], err
 
 }

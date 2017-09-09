@@ -67,7 +67,7 @@ type Token struct {
 func main() {
 	//initKeys()
 
-	url := "http://arcadia-sc.euprojects.net/api/v1/node/497/config"
+	url := "http://arcadia-sc.euprojects.net/api/v1/node/498/config"
 	fmt.Println("URL:>", url)
 
 	usr, err := user.Current()
@@ -76,12 +76,15 @@ func main() {
 
 	}
 
-	nid := "497"
+	nid := "15750035-3e0e"
 	publicKey, _ := util.GetPublicKey(usr.HomeDir + "/Desktop/authorized_keys")
-	arrPublicKey, _ := util.ParseRsaPublicKeyFromPemStr(publicKey)
+	arrPublicKey, yolo, _ := util.ParseRsaPublicKeyFromPemStr(publicKey)
+	fmt.Println(arrPublicKey)
 	arrNid := []byte(nid)
 
-	uEnc, err := util.RsaEncrypt(*arrPublicKey, arrNid)
+	/*pubInterface, err := x509.ParsePKIXPublicKey(block.Bytes)
+	pub := pubInterface.(*rsa.PublicKey)*/
+	uEnc, err := util.RsaEncrypt(yolo, arrNid)
 	if err != nil {
 		log.Error(err)
 
@@ -92,7 +95,7 @@ func main() {
 	var jsonStr = []byte("parameters")
 	req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer " + authorizationKey)
+	req.Header.Set("Authorization", authorizationKey)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -249,3 +252,41 @@ func JsonResponse(response interface{}, w http.ResponseWriter) {
 	w.Write(json)
 
 }
+
+var privateKeyData = []byte(`-----BEGIN RSA PRIVATE KEY-----
+MIIEogIBAAKCAQEA6yUrWecafi6dBgBjoCeVZY7AM0sRqdWcx8UV8VFEpbsManyM
+HIb8YC6FREXAEKgafCqU2s3j2NJudHV/BHZQKILFJxxEOo5jwtNHwzkwaOX62Rae
+LhkMf+aT79g/YN2o1XghAt5TRgWeN9FRJH4909bb3ebamIQh7V+IqpWO2zJHZqx2
+Cns20LpU/ep/WE5npYTALDlTOCbULSPI9isIRGH44Ucspg3vazoSXJx7iYc9z4t+
+sFuJ9o7PG/LaBq97lKGxgESgL7lVSjvU+ZAXfo1A7BLZ7pW/W9TgNwJ8g/PHa25c
+bPbK/gtU0Q57GOtfLtSOskljPLGYR+AQKLsCFQIDAQABAoIBAHLolQi38LBc4wr9
+wbGP5mfcnHv0YUtXQeg1nYVxq1Q51dVry6RdKpNt6F32n+cD3v1yaY+LMZ7RJnzu
+tgVeM8m4LdPw8j6TOpkIWndCSS/Zwv23GdF5GCygZwa77CzP5SN8MtWOA6+iKzEn
+rrlgn6IXyxXjLEt/tnyjRMvnjgn61hMSehJjRQs1fMxGKQHgy59zVM5v7LvwTjOL
++7xEkiD8XdsC4B7uy7Vnm7mkEvTCMzvVkUT5JHv4bwpFq4GQN79abFG06QX0a7Nf
+2ZTC1SjVjcSNvPdQx6KCcF3LQPWcgRfmJZ90Dq3BBc/eUE5A5wO552lQ8OT4S03Z
+e58u7UECgYEA/UFZN0RBqPRn7i/RbN2H/M1qlrxVCf/1pug47mqe0JKDkzutOSsG
+ecXMXkmNbzq8L0oBhZpkMNXdulNRwRsCNGCHVeTvc5m+/YFH/S/6jHP9EZ6wnJZk
+iRpQ9QjOGSg4aPETJ0FwqZNK3wYthU1W4n8O9LxtTSjpzYdy2/1ohL0CgYEA7bGT
+JvJexsVDrXAF0EbuRudEKF4oA3w5eRSu4Exlhpw35s+X6WTxmaW4xPZ1qfcMF4m8
+tPoQya7v0nbFJlsXsXTlnosYl/KccB5sM5R41MKRaTTU5v1//QMZ9zua060YFoyW
+aVKlj1hefsUjbsfIDQ9uSYk1jEEDoRKHkhJUhDkCgYAO+mJwZlULzQioiaN1MNTu
+GqgHKjRNVxoMOQfE8gFajI/DkW/5RZYodY5UtTzsKykeEt5sLGloif2HG45mQVas
+Cll2tweCasFk9NRxIPlMfT+mXyBK4oonoarQEyk9S6eqbTeYxsIHBXMUJaVjkONm
+meUkjFBak+TgBvbAFAiucQKBgHOgw63Zj8NwKOkRKrLUHou9awmcLCjt4GOHbT7N
+y0G9cvBEImk2YtVUqdqe7kRdWrOEnJkJYOtLv3yJrIRpIdCAxkbm8XLRYcqk8gvx
+eQo/EE+2lK89uGpTfOkpRLseZC5r+6uGueVOnsFak08LvsSjsgnxxmvRILvVcL/d
+TOH5AoGAD0Zg0HvSm3Lf4s8T8ANCLUttZkYm/2OOtcCR0yBc3hZSdtPo4la6DFKZ
+G/+KXgI6psszh/MMl7uCvubDCsY4yBHuQT5KmPD73AFV6wyH3zuBgmNBw5oCsE15
+0A4FQWcyiM6vpj+nmG45i3T26+83GyhGfghm7LT/alp84W5G/Wo=
+-----END RSA PRIVATE KEY-----`)
+
+var publickKeyData = []byte(`-----BEGIN RSA PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6yUrWecafi6dBgBjoCeV
+ZY7AM0sRqdWcx8UV8VFEpbsManyMHIb8YC6FREXAEKgafCqU2s3j2NJudHV/BHZQ
+KILFJxxEOo5jwtNHwzkwaOX62RaeLhkMf+aT79g/YN2o1XghAt5TRgWeN9FRJH49
+09bb3ebamIQh7V+IqpWO2zJHZqx2Cns20LpU/ep/WE5npYTALDlTOCbULSPI9isI
+RGH44Ucspg3vazoSXJx7iYc9z4t+sFuJ9o7PG/LaBq97lKGxgESgL7lVSjvU+ZAX
+fo1A7BLZ7pW/W9TgNwJ8g/PHa25cbPbK/gtU0Q57GOtfLtSOskljPLGYR+AQKLsC
+FQIDAQAB
+-----END RSA PUBLIC KEY-----`)
