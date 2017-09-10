@@ -23,7 +23,7 @@ import (
 
 )
 
-func GetPrivateKey(path string) (string, error) {
+func GetPrivateKeyPemStr(path string) (string, error) {
 	//Read in private key from file
 	bytes, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -69,7 +69,42 @@ func GetPrivateKey(path string) (string, error) {
 
 }
 
-func GetPublicKey(path string) (string, error) {
+func GetPrivateKeyPem(path string)  ([]byte) {
+	//Read in private key from file
+	bytes, err := ioutil.ReadFile(path)
+	if err != nil {
+		log.Error(err)
+
+	}
+
+	// decode PEM encoding to ANS.1 PKCS1 DER
+	block, _ := pem.Decode(bytes)
+	if block == nil {
+		log.Error("No Block found in keyfile")
+
+	}
+
+	if block.Type != "RSA PRIVATE KEY" {
+		log.Error("Unsupported key type")
+
+	}
+
+	// parse DER format to a native type
+	key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+
+	// Encode to PEM format
+	pemStructPivate := pem.EncodeToMemory(&pem.Block{
+		Type: "RSA PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(key),
+	})
+
+	log.Info(string(pemStructPivate))
+
+	return pemStructPivate
+
+}
+
+func GetPublicKeyPemStr(path string) (string, error) {
 	//Read in public key from file
 	log.Info("Calling readFileWithReadLine.....................................")
 	line, err := readFileWithReadLine(path)
@@ -94,6 +129,7 @@ func GetPublicKey(path string) (string, error) {
 	}
 
 	publicKey, err := ExportRsaPublicKeyAsPemStr(pub_key.(*rsa.PublicKey))
+
 	if err != nil {
 		log.Error(err)
 
@@ -102,6 +138,47 @@ func GetPublicKey(path string) (string, error) {
 	}
 
 	return publicKey, err
+
+}
+
+func GetPublicKeyPem(path string) ([]byte) {
+	//Read in public key from file
+	log.Info("Calling readFileWithReadLine.....................................")
+	line, err := readFileWithReadLine(path)
+	if err == io.EOF {
+		//Do nothing
+
+	}else {
+		log.Error(err); os.Exit(1)
+
+	}
+
+	// decode string ssh-rsa format to native type
+	// pub_key is of type *rsa.PublicKey
+	pub_key, err := ssh.DecodePublicKey(line)
+	if err != nil {
+		log.Error(err)
+
+	}
+
+	yolo := pub_key.(*rsa.PublicKey)
+
+	// Marshal to ASN.1 DER encoding
+	pkix, err := x509.MarshalPKIXPublicKey(yolo)
+	if err != nil {
+		log.Error(err)
+
+	}
+
+	// Encode to PEM format
+	pemStructPublic := pem.EncodeToMemory(&pem.Block{
+		Type: "RSA PUBLIC KEY",
+		Bytes: pkix,
+	})
+
+	log.Info(string(pemStructPublic))
+
+	return pemStructPublic
 
 }
 

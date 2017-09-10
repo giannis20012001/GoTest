@@ -4,13 +4,13 @@ import (
 	"os"
 	"io"
 	"fmt"
-	"encoding/pem"
-	ssh2pem "github.com/ssh-vault/ssh2pem"
-	log "github.com/Sirupsen/logrus"
-
 	"bufio"
 	"bytes"
 	"strconv"
+	"encoding/pem"
+	log "github.com/Sirupsen/logrus"
+	ssh2pem "github.com/ssh-vault/ssh2pem"
+
 )
 
 /**
@@ -30,8 +30,8 @@ func main() {
 
 	}
 
-	/*test, _ := ssh2pem.DecodePublicKey(line)
-	fmt.Println(test)*/
+	test, _ := ssh2pem.DecodePublicKey(line)
+	fmt.Println(test)
 	yolo, _ := ssh2pem.GetPublicKeyPem(line)
 
 	// Encode to PEM format
@@ -54,7 +54,7 @@ func readFileWithReadLine(fn string) (string, error) {
 	defer file.Close()
 
 	if err != nil {
-		return line[0], err
+		return line[1], err
 
 	}
 
@@ -97,6 +97,6 @@ func readFileWithReadLine(fn string) (string, error) {
 
 	}
 
-	return line[0], err
+	return line[1], err
 
 }

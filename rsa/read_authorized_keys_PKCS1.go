@@ -14,7 +14,6 @@ import (
 	"io/ioutil"
 	"fmt"
 	"crypto/x509"
-	"crypto/rsa"
 	"encoding/pem"
 	"github.com/ianmcmahon/encoding_ssh"
 	log "github.com/Sirupsen/logrus"
@@ -25,7 +24,6 @@ func main() {
 	//Read in public key from file
 	//log.Info("Calling readFileWithReadLine.....................................")
 	line, err := ReadFileWithReadLine(os.Getenv("HOME") + "/Desktop/authorized_keys")
-	//line, err := ReadFileWithReadLine(os.Getenv("HOME") + "/Desktop/ssh_keys/newlumimainkeypair.pub")
 	if err == io.EOF {
 		//Do nothing
 
@@ -42,10 +40,8 @@ func main() {
 
 	}
 
-	yolo := pub_key.(*rsa.PublicKey)
-
 	// Marshal to ASN.1 DER encoding
-	pkix, err := x509.MarshalPKIXPublicKey(yolo)
+	pkix, err := x509.MarshalPKIXPublicKey(pub_key)
 	if err != nil {
 		log.Error(err); os.Exit(1)
 
@@ -59,12 +55,12 @@ func main() {
 
 	//log.Info(string(pem))
 	fmt.Println(string(pemStructPublic))
+	fmt.Println()
 
 	//==================================================================================================================
 	//==================================================================================================================
 	//Read in private key from file
-	//bytes, err := ioutil.ReadFile(os.Getenv("HOME") + "/Desktop/ssh_keys/lumimainkeypair.pem")
-	bytes, err := ioutil.ReadFile(os.Getenv("HOME") + "/Desktop/ssh_keys/newlumimainkeypair.pem")
+	bytes, err := ioutil.ReadFile(os.Getenv("HOME") + "/Desktop/test.pem")
 	if err != nil { fmt.Printf("%v\n", err); os.Exit(1) }
 
 	// decode PEM encoding to ANS.1 PKCS1 DER

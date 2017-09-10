@@ -67,7 +67,7 @@ type Token struct {
 func main() {
 	//initKeys()
 
-	url := "http://arcadia-sc.euprojects.net/api/v1/node/499/config"
+	url := "http://localhost:8080/api/v1/node/1/config"
 	fmt.Println("URL:>", url)
 
 	usr, err := user.Current()
@@ -77,17 +77,15 @@ func main() {
 	}
 
 	nid := "15750035-3e0e"
-	publicKey, _ := util.GetPublicKey(usr.HomeDir + "/Desktop/authorized_keys")
-	arrPublicKey, _ := util.ParseRsaPublicKeyFromPemStr(publicKey)
-	fmt.Println(arrPublicKey)
 	arrNid := []byte(nid)
-	uEnc, err := util.RsaEncrypt(publickKeyData, arrNid)
+	publicKey := util.GetPublicKeyPem(usr.HomeDir + "/Desktop/authorized_keys")
+	uEnc, err := util.RsaEncrypt(publicKey, arrNid)
 	if err != nil {
 		log.Error(err)
 
 	}
 
-	authorizationKey := b64.URLEncoding.EncodeToString(uEnc)
+	authorizationKey := b64.StdEncoding.EncodeToString(uEnc)
 
 	var jsonStr = []byte("parameters")
 	req, err := http.NewRequest("GET", url, bytes.NewBuffer(jsonStr))
@@ -250,7 +248,7 @@ func JsonResponse(response interface{}, w http.ResponseWriter) {
 
 }
 
-var privateKeyData = []byte(`-----BEGIN RSA PRIVATE KEY-----
+var privateKeyData2 = []byte(`-----BEGIN RSA PRIVATE KEY-----
 MIIEogIBAAKCAQEA6yUrWecafi6dBgBjoCeVZY7AM0sRqdWcx8UV8VFEpbsManyM
 HIb8YC6FREXAEKgafCqU2s3j2NJudHV/BHZQKILFJxxEOo5jwtNHwzkwaOX62Rae
 LhkMf+aT79g/YN2o1XghAt5TRgWeN9FRJH4909bb3ebamIQh7V+IqpWO2zJHZqx2
@@ -278,7 +276,7 @@ G/+KXgI6psszh/MMl7uCvubDCsY4yBHuQT5KmPD73AFV6wyH3zuBgmNBw5oCsE15
 0A4FQWcyiM6vpj+nmG45i3T26+83GyhGfghm7LT/alp84W5G/Wo=
 -----END RSA PRIVATE KEY-----`)
 
-var publickKeyData = []byte(`------BEGIN RSA PUBLIC KEY-----
+var publickKeyData2 = []byte(`------BEGIN RSA PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5mR83+DAb1uHyePI7mQh
 yCMlMDtUfEJbxruplFIbSmVqkToxnrZnzDafnAk8R8Hbn87vJyafA3LDiHj4o3Q6
 JLLtQQrXFH8W8qr8R3QDqGiBIwqeFB+cRHaV3Wb4o2QEZssW0xyJWsUCpi9NqQiv
