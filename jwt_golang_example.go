@@ -67,7 +67,7 @@ type Token struct {
 func main() {
 	//initKeys()
 
-	url := "http://localhost:8080/api/v1/node/1/config"
+	url := "http://localhost:8080/api/v1/node/2/config"
 	fmt.Println("URL:>", url)
 
 	usr, err := user.Current()
@@ -247,41 +247,3 @@ func JsonResponse(response interface{}, w http.ResponseWriter) {
 	w.Write(json)
 
 }
-
-var privateKeyData2 = []byte(`-----BEGIN RSA PRIVATE KEY-----
-MIIEogIBAAKCAQEA6yUrWecafi6dBgBjoCeVZY7AM0sRqdWcx8UV8VFEpbsManyM
-HIb8YC6FREXAEKgafCqU2s3j2NJudHV/BHZQKILFJxxEOo5jwtNHwzkwaOX62Rae
-LhkMf+aT79g/YN2o1XghAt5TRgWeN9FRJH4909bb3ebamIQh7V+IqpWO2zJHZqx2
-Cns20LpU/ep/WE5npYTALDlTOCbULSPI9isIRGH44Ucspg3vazoSXJx7iYc9z4t+
-sFuJ9o7PG/LaBq97lKGxgESgL7lVSjvU+ZAXfo1A7BLZ7pW/W9TgNwJ8g/PHa25c
-bPbK/gtU0Q57GOtfLtSOskljPLGYR+AQKLsCFQIDAQABAoIBAHLolQi38LBc4wr9
-wbGP5mfcnHv0YUtXQeg1nYVxq1Q51dVry6RdKpNt6F32n+cD3v1yaY+LMZ7RJnzu
-tgVeM8m4LdPw8j6TOpkIWndCSS/Zwv23GdF5GCygZwa77CzP5SN8MtWOA6+iKzEn
-rrlgn6IXyxXjLEt/tnyjRMvnjgn61hMSehJjRQs1fMxGKQHgy59zVM5v7LvwTjOL
-+7xEkiD8XdsC4B7uy7Vnm7mkEvTCMzvVkUT5JHv4bwpFq4GQN79abFG06QX0a7Nf
-2ZTC1SjVjcSNvPdQx6KCcF3LQPWcgRfmJZ90Dq3BBc/eUE5A5wO552lQ8OT4S03Z
-e58u7UECgYEA/UFZN0RBqPRn7i/RbN2H/M1qlrxVCf/1pug47mqe0JKDkzutOSsG
-ecXMXkmNbzq8L0oBhZpkMNXdulNRwRsCNGCHVeTvc5m+/YFH/S/6jHP9EZ6wnJZk
-iRpQ9QjOGSg4aPETJ0FwqZNK3wYthU1W4n8O9LxtTSjpzYdy2/1ohL0CgYEA7bGT
-JvJexsVDrXAF0EbuRudEKF4oA3w5eRSu4Exlhpw35s+X6WTxmaW4xPZ1qfcMF4m8
-tPoQya7v0nbFJlsXsXTlnosYl/KccB5sM5R41MKRaTTU5v1//QMZ9zua060YFoyW
-aVKlj1hefsUjbsfIDQ9uSYk1jEEDoRKHkhJUhDkCgYAO+mJwZlULzQioiaN1MNTu
-GqgHKjRNVxoMOQfE8gFajI/DkW/5RZYodY5UtTzsKykeEt5sLGloif2HG45mQVas
-Cll2tweCasFk9NRxIPlMfT+mXyBK4oonoarQEyk9S6eqbTeYxsIHBXMUJaVjkONm
-meUkjFBak+TgBvbAFAiucQKBgHOgw63Zj8NwKOkRKrLUHou9awmcLCjt4GOHbT7N
-y0G9cvBEImk2YtVUqdqe7kRdWrOEnJkJYOtLv3yJrIRpIdCAxkbm8XLRYcqk8gvx
-eQo/EE+2lK89uGpTfOkpRLseZC5r+6uGueVOnsFak08LvsSjsgnxxmvRILvVcL/d
-TOH5AoGAD0Zg0HvSm3Lf4s8T8ANCLUttZkYm/2OOtcCR0yBc3hZSdtPo4la6DFKZ
-G/+KXgI6psszh/MMl7uCvubDCsY4yBHuQT5KmPD73AFV6wyH3zuBgmNBw5oCsE15
-0A4FQWcyiM6vpj+nmG45i3T26+83GyhGfghm7LT/alp84W5G/Wo=
------END RSA PRIVATE KEY-----`)
-
-var publickKeyData2 = []byte(`------BEGIN RSA PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5mR83+DAb1uHyePI7mQh
-yCMlMDtUfEJbxruplFIbSmVqkToxnrZnzDafnAk8R8Hbn87vJyafA3LDiHj4o3Q6
-JLLtQQrXFH8W8qr8R3QDqGiBIwqeFB+cRHaV3Wb4o2QEZssW0xyJWsUCpi9NqQiv
-A2YBDvIX0z2lcatICqHyEZQ9m80iL1aM5gDEXwDGKCuS9NsE/MUK3BmiX+GgFVw4
-n9t5IfsC/yt5iqFxfcgyx7X4HlP9wyP5ywsQeTo5DLR2/HJ+1nIFajp21XCi/1VO
-9tqclaT2v4zCa9PjoRmu2/UIfU5upyblqOX1YKHo9BiUgUpBNdDwcxPW1kYOdM7G
-UwIDAQAB
------END RSA PUBLIC KEY-----`)
