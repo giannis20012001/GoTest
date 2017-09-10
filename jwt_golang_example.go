@@ -67,7 +67,7 @@ type Token struct {
 func main() {
 	//initKeys()
 
-	url := "http://arcadia-sc.euprojects.net/api/v1/node/498/config"
+	url := "http://arcadia-sc.euprojects.net/api/v1/node/499/config"
 	fmt.Println("URL:>", url)
 
 	usr, err := user.Current()
@@ -78,13 +78,10 @@ func main() {
 
 	nid := "15750035-3e0e"
 	publicKey, _ := util.GetPublicKey(usr.HomeDir + "/Desktop/authorized_keys")
-	arrPublicKey, yolo, _ := util.ParseRsaPublicKeyFromPemStr(publicKey)
+	arrPublicKey, _ := util.ParseRsaPublicKeyFromPemStr(publicKey)
 	fmt.Println(arrPublicKey)
 	arrNid := []byte(nid)
-
-	/*pubInterface, err := x509.ParsePKIXPublicKey(block.Bytes)
-	pub := pubInterface.(*rsa.PublicKey)*/
-	uEnc, err := util.RsaEncrypt(yolo, arrNid)
+	uEnc, err := util.RsaEncrypt(publickKeyData, arrNid)
 	if err != nil {
 		log.Error(err)
 
@@ -281,12 +278,12 @@ G/+KXgI6psszh/MMl7uCvubDCsY4yBHuQT5KmPD73AFV6wyH3zuBgmNBw5oCsE15
 0A4FQWcyiM6vpj+nmG45i3T26+83GyhGfghm7LT/alp84W5G/Wo=
 -----END RSA PRIVATE KEY-----`)
 
-var publickKeyData = []byte(`-----BEGIN RSA PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6yUrWecafi6dBgBjoCeV
-ZY7AM0sRqdWcx8UV8VFEpbsManyMHIb8YC6FREXAEKgafCqU2s3j2NJudHV/BHZQ
-KILFJxxEOo5jwtNHwzkwaOX62RaeLhkMf+aT79g/YN2o1XghAt5TRgWeN9FRJH49
-09bb3ebamIQh7V+IqpWO2zJHZqx2Cns20LpU/ep/WE5npYTALDlTOCbULSPI9isI
-RGH44Ucspg3vazoSXJx7iYc9z4t+sFuJ9o7PG/LaBq97lKGxgESgL7lVSjvU+ZAX
-fo1A7BLZ7pW/W9TgNwJ8g/PHa25cbPbK/gtU0Q57GOtfLtSOskljPLGYR+AQKLsC
-FQIDAQAB
+var publickKeyData = []byte(`------BEGIN RSA PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5mR83+DAb1uHyePI7mQh
+yCMlMDtUfEJbxruplFIbSmVqkToxnrZnzDafnAk8R8Hbn87vJyafA3LDiHj4o3Q6
+JLLtQQrXFH8W8qr8R3QDqGiBIwqeFB+cRHaV3Wb4o2QEZssW0xyJWsUCpi9NqQiv
+A2YBDvIX0z2lcatICqHyEZQ9m80iL1aM5gDEXwDGKCuS9NsE/MUK3BmiX+GgFVw4
+n9t5IfsC/yt5iqFxfcgyx7X4HlP9wyP5ywsQeTo5DLR2/HJ+1nIFajp21XCi/1VO
+9tqclaT2v4zCa9PjoRmu2/UIfU5upyblqOX1YKHo9BiUgUpBNdDwcxPW1kYOdM7G
+UwIDAQAB
 -----END RSA PUBLIC KEY-----`)

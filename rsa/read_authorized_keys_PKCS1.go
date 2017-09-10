@@ -99,7 +99,7 @@ func ReadFileWithReadLine(fn string) (string, error) {
 	defer file.Close()
 
 	if err != nil {
-		return line[0], err
+		return line[1], err
 
 	}
 
@@ -142,6 +142,6 @@ func ReadFileWithReadLine(fn string) (string, error) {
 
 	}
 
-	return line[0], err
+	return line[1], err
 
 }
