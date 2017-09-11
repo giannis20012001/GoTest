@@ -1,4 +1,4 @@
-package main
+package rsa
 
 /**
  * Created by John Tsantilis

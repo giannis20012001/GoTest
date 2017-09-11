@@ -1,4 +1,4 @@
-package main
+package rsa
 
 /**
  * Created by John Tsantilis
@@ -20,7 +20,6 @@ import (
 	"github.com/dgrijalva/jwt-go/request"
 	"github.com/giannis20012001/GoTest/util"
 	b64 "encoding/base64"
-	log "github.com/Sirupsen/logrus"
 
 )
 
@@ -62,12 +61,14 @@ type Token struct {
 
 }
 
+
 //=====================================================================================================================
 //=====================================================================================================================
 func main() {
 	//initKeys()
+	//StartServer()
 
-	url := "http://localhost:8080/api/v1/node/2/config"
+	url := "http://arcadia-sc.euprojects.net/api/v1/node/501/config"
 	fmt.Println("URL:>", url)
 
 	usr, err := user.Current()
@@ -81,7 +82,7 @@ func main() {
 	publicKey := util.GetPublicKeyPem(usr.HomeDir + "/Desktop/authorized_keys")
 	uEnc, err := util.RsaEncrypt(publicKey, arrNid)
 	if err != nil {
-		log.Error(err)
+		fmt.Println(err)
 
 	}
 
@@ -92,20 +93,32 @@ func main() {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", authorizationKey)
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: time.Second * 10,
+
+	}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		panic(err)
+
 	}
+
 	defer resp.Body.Close()
 
+	body, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println("response Status:", resp.Status)
 	fmt.Println("response Headers:", resp.Header)
-	body, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println("response Body:", string(body))
 
-	//StartServer()
+	var data map[string]interface{}
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		panic(err)
 
+	}
+
+	fmt.Println(data["returnobject"])
 
 }
 //=====================================================================================================================
@@ -113,7 +126,7 @@ func main() {
 
 func fatal(err error) {
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 
 	}
 
@@ -145,7 +158,7 @@ func StartServer(){
 		negroni.Wrap(http.HandlerFunc(ProtectedHandler)),
 	))
 
-	log.Println("Now listening...")
+	fmt.Println("Now listening...")
 	http.ListenAndServe(":8080", nil)
 
 }

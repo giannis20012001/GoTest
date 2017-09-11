@@ -49,21 +49,7 @@ func GetPrivateKeyPemStr(path string) (string, error) {
 
 	// parse DER format to a native type
 	key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
-
-
 	privateKey := ExportRsaPrivateKeyAsPemStr(key)
-
-	// encode the public key portion of the native key into ssh-rsa format
-	// second parameter is the optional "comment" at the end of the string (usually 'user@host')
-	ssh_rsa, err := ssh.EncodePublicKey(key.PublicKey, "")
-	if err != nil {
-		log.Error(err)
-
-		return "", err
-
-	}
-
-	fmt.Printf("%s\n", ssh_rsa)
 
 	return privateKey, err
 
