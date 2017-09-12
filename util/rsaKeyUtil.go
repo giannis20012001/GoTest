@@ -10,7 +10,6 @@ import (
 	"bufio"
 	"bytes"
 	"io"
-	"strconv"
 	"crypto/rsa"
 	"crypto/x509"
 	"crypto/rand"
@@ -19,7 +18,6 @@ import (
 	"io/ioutil"
 	"errors"
 	"github.com/ianmcmahon/encoding_ssh"
-	log "github.com/Sirupsen/logrus"
 
 )
 
@@ -34,14 +32,14 @@ func GetPrivateKeyPemStr(path string) (string, error) {
 	// decode PEM encoding to ANS.1 PKCS1 DER
 	block, _ := pem.Decode(bytes)
 	if block == nil {
-		log.Error("No Block found in keyfile")
+		fmt.Println("No Block found in keyfile")
 
 		return "", nil
 
 	}
 
 	if block.Type != "RSA PRIVATE KEY" {
-		log.Error("Unsupported key type")
+		fmt.Println("Unsupported key type")
 
 		return "", nil
 
@@ -59,19 +57,19 @@ func GetPrivateKeyPem(path string)  ([]byte) {
 	//Read in private key from file
 	bytes, err := ioutil.ReadFile(path)
 	if err != nil {
-		log.Error(err)
+		fmt.Println(err)
 
 	}
 
 	// decode PEM encoding to ANS.1 PKCS1 DER
 	block, _ := pem.Decode(bytes)
 	if block == nil {
-		log.Error("No Block found in keyfile")
+		fmt.Println("No Block found in keyfile")
 
 	}
 
 	if block.Type != "RSA PRIVATE KEY" {
-		log.Error("Unsupported key type")
+		fmt.Println("Unsupported key type")
 
 	}
 
@@ -84,7 +82,7 @@ func GetPrivateKeyPem(path string)  ([]byte) {
 		Bytes: x509.MarshalPKCS1PrivateKey(key),
 	})
 
-	log.Info(string(pemStructPivate))
+	fmt.Println(string(pemStructPivate))
 
 	return pemStructPivate
 
@@ -92,13 +90,13 @@ func GetPrivateKeyPem(path string)  ([]byte) {
 
 func GetPublicKeyPemStr(path string) (string, error) {
 	//Read in public key from file
-	log.Info("Calling readFileWithReadLine.....................................")
+	fmt.Println("Calling readFileWithReadLine.....................................")
 	line, err := readFileWithReadLine(path)
 	if err == io.EOF {
 		//Do nothing
 
 	}else {
-		log.Error(err)
+		fmt.Println(err)
 
 		return "", err
 
@@ -108,7 +106,7 @@ func GetPublicKeyPemStr(path string) (string, error) {
 	// pub_key is of type *rsa.PublicKey
 	pub_key, err := ssh.DecodePublicKey(line)
 	if err != nil {
-		log.Error(err)
+		fmt.Println(err)
 
 		return "", err
 
@@ -117,7 +115,7 @@ func GetPublicKeyPemStr(path string) (string, error) {
 	publicKey, err := ExportRsaPublicKeyAsPemStr(pub_key.(*rsa.PublicKey))
 
 	if err != nil {
-		log.Error(err)
+		fmt.Println(err)
 
 		return "", err
 
@@ -129,13 +127,13 @@ func GetPublicKeyPemStr(path string) (string, error) {
 
 func GetPublicKeyPem(path string) ([]byte) {
 	//Read in public key from file
-	log.Info("Calling readFileWithReadLine.....................................")
+	fmt.Println("Calling readFileWithReadLine.....................................")
 	line, err := readFileWithReadLine(path)
 	if err == io.EOF {
 		//Do nothing
 
 	}else {
-		log.Error(err); os.Exit(1)
+		fmt.Println(err); os.Exit(1)
 
 	}
 
@@ -143,7 +141,7 @@ func GetPublicKeyPem(path string) ([]byte) {
 	// pub_key is of type *rsa.PublicKey
 	pub_key, err := ssh.DecodePublicKey(line)
 	if err != nil {
-		log.Error(err)
+		fmt.Println(err)
 
 	}
 
@@ -152,7 +150,7 @@ func GetPublicKeyPem(path string) ([]byte) {
 	// Marshal to ASN.1 DER encoding
 	pkix, err := x509.MarshalPKIXPublicKey(yolo)
 	if err != nil {
-		log.Error(err)
+		fmt.Println(err)
 
 	}
 
@@ -162,7 +160,7 @@ func GetPublicKeyPem(path string) ([]byte) {
 		Bytes: pkix,
 	})
 
-	log.Info(string(pemStructPublic))
+	//fmt.Println(string(pemStructPublic))
 
 	return pemStructPublic
 
@@ -172,7 +170,7 @@ func RsaEncrypt(publicKey []byte, origData []byte) ([]byte, error) {
 	block, _ := pem.Decode(publicKey)
 	if block == nil {
 		err := errors.New("public key error")
-		log.Error(err)
+		fmt.Println(err)
 
 		return nil, err
 
@@ -180,7 +178,7 @@ func RsaEncrypt(publicKey []byte, origData []byte) ([]byte, error) {
 
 	pubInterface, err := x509.ParsePKIXPublicKey(block.Bytes)
 	if err != nil {
-		log.Error(err)
+		fmt.Println(err)
 
 		return nil, err
 
@@ -196,7 +194,7 @@ func RsaDecrypt(privateKey []byte, ciphertext []byte) ([]byte, error) {
 	block, _ := pem.Decode(privateKey)
 	if block == nil {
 		err := errors.New("private key error")
-		log.Error(err)
+		fmt.Println(err)
 
 		return nil, err
 
@@ -204,7 +202,7 @@ func RsaDecrypt(privateKey []byte, ciphertext []byte) ([]byte, error) {
 
 	priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
-		log.Error(err)
+		fmt.Println(err)
 
 		return nil, err
 
@@ -224,7 +222,7 @@ func GenerateRsaKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
 func ExportRsaPublicKeyAsPemStr(pubkey *rsa.PublicKey) (string, error) {
 	pubkey_bytes, err := x509.MarshalPKIXPublicKey(pubkey)
 	if err != nil {
-		log.Error(err)
+		fmt.Println(err)
 
 		return "", err
 
@@ -258,7 +256,7 @@ func ParseRsaPublicKeyFromPemStr(pubPEM string) (*rsa.PublicKey, error) {
 	block, _ := pem.Decode([]byte(pubPEM))
 	if block == nil {
 		err := errors.New("failed to parse PEM block containing the key")
-		log.Error(err)
+		fmt.Println(err)
 
 		return nil, err
 
@@ -266,7 +264,7 @@ func ParseRsaPublicKeyFromPemStr(pubPEM string) (*rsa.PublicKey, error) {
 
 	pub, err := x509.ParsePKIXPublicKey(block.Bytes)
 	if err != nil {
-		log.Error(err)
+		fmt.Println(err)
 
 		return nil, err
 
@@ -282,7 +280,7 @@ func ParseRsaPublicKeyFromPemStr(pubPEM string) (*rsa.PublicKey, error) {
 	}
 
 	err = errors.New("failed to parse PEM block containing the key")
-	log.Error(err)
+	fmt.Println(err)
 
 	return nil, err
 
@@ -292,7 +290,7 @@ func ParseRsaPrivateKeyFromPemStr(privPEM string) (*rsa.PrivateKey, error) {
 	block, _ := pem.Decode([]byte(privPEM))
 	if block == nil {
 		err := errors.New("failed to parse PEM block containing the key")
-		log.Error(err)
+		fmt.Println(err)
 
 		return nil, err
 
@@ -300,7 +298,7 @@ func ParseRsaPrivateKeyFromPemStr(privPEM string) (*rsa.PrivateKey, error) {
 
 	priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
-		log.Error(err)
+		fmt.Println(err)
 
 		return nil, err
 
@@ -317,7 +315,7 @@ func readFileWithReadLine(fn string) (string, error) {
 	defer file.Close()
 
 	if err != nil {
-		log.Error(err)
+		fmt.Println(err)
 
 		return line[1], err
 
@@ -342,7 +340,7 @@ func readFileWithReadLine(fn string) (string, error) {
 
 			// If we're just at the EOF, break
 			if err != nil {
-				log.Error(err)
+				fmt.Println(err)
 
 				break
 
@@ -356,10 +354,10 @@ func readFileWithReadLine(fn string) (string, error) {
 		}
 
 		line = append(line, buffer.String())
-		log.Debug("Read " + strconv.Itoa(len(line[counter])) + " characters\n")
+		//fmt.Println("Read " + strconv.Itoa(len(line[counter])) + " characters\n")
 
 		// Process the line here.
-		log.Debug(line[counter])
+		//fmt.Println(line[counter])
 		counter++
 
 	}
