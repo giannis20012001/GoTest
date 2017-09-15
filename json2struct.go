@@ -10,13 +10,16 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	"strings"
+	_"strings"
 	"os/user"
 	"bytes"
+	_"strconv"
 	"io/ioutil"
 	"github.com/giannis20012001/GoTest/util"
 	b64 "encoding/base64"
 
+	"strings"
+	"strconv"
 )
 
 type Response struct {
@@ -46,7 +49,7 @@ type ComponentInfo struct {
 	ClassName string `json:"className"`
 	CNID	string `json:"CNID"`
 	NativeComponent bool   `json:"nativeComponent"`
-	DependencyResolutionHandlers []DependencyBindingHandlers `json:"dependencyResolutionHandlers"`
+	DependencyResolutionHandlers []DependencyResolutionHandlers `json:"dependencyResolutionHandlers"`
 	DependencyBindingHandlers []DependencyBindingHandlers `json:"dependencyBindingHandlers"`
 	Metrics []Metrics `json:"metrics"`
 	ConfigurationParameters []ConfigurationParameters `json:"configurationParameters"`
@@ -92,7 +95,7 @@ type ContainerParameters struct {
 }
 
 func main() {
-	url := "http://arcadia-sc.euprojects.net/api/v1/node/503/config"
+	url := "http://arcadia-sc.euprojects.net/api/v1/node/10/config"
 	fmt.Println("URL:>", url)
 
 	usr, err := user.Current()
@@ -158,14 +161,40 @@ func main() {
 	result := replacer.Replace(value)
 	fmt.Println(result)
 
-	var y map[string]interface{}
-	json.Unmarshal([]byte(result), &y)
-	fmt.Printf("%v\n", y["componentInfo"].(map[string]interface{})["dependencyResolutionHandlers"].(map[string]interface{})["aea5f833-008e-410d-9b0d-d06f4ffad83a"])
-	fmt.Printf("%v", y["groundInfo"].(map[string]interface{})["publicIP"].(string))
+	fmt.Println()
+	var final map[string]interface{}
+	json.Unmarshal([]byte(result), &final)
+	fmt.Printf("%v\n", final["groundInfo"].(map[string]interface{})["publicIP"].(string))
+	//fmt.Printf("%v", y["componentInfo"].(map[string]interface{})["dependencyResolutionHandlers"].(map[string]interface{})["aea5f833-008e-410d-9b0d-d06f4ffad83a"])
+
 	//
+	fmt.Println()
 	alpha := new(ComponentInfo)
-	//alpha.AddMetric("test")
-	fmt.Println(alpha.Metrics[0].BytesReceived)
+	alpha.ClassName = final["componentInfo"].(map[string]interface{})["className"].(string)
+	alpha.CNID = final["componentInfo"].(map[string]interface{})["CNID"].(string)
+	alpha.NativeComponent, _ = strconv.ParseBool(final["nativeComponent"].(map[string]interface{})["publicIP"].(string))
+	//alpha.DependencyResolutionHandlers[0]
+	//alpha.DependencyBindingHandlers[0]
+	alpha.Metrics[0].BytesReceived = final["componentInfo"].(map[string]interface{})["metrics"].(map[string]interface{})["Bytes_received"].(string)
+	alpha.Metrics[0].BytesSent = final["componentInfo"].(map[string]interface{})["metrics"].(map[string]interface{})["Bytes_sent"].(string)
+	alpha.Metrics[0].Connections = final["componentInfo"].(map[string]interface{})["metrics"].(map[string]interface{})["Connections"].(string)
+
+	alpha.ConfigurationParameters[0].DbHost = final["componentInfo"].(map[string]interface{})["configurationParameters"].(map[string]interface{})[""].(string)
+	alpha.ConfigurationParameters[0].DbPassword = final["componentInfo"].(map[string]interface{})["configurationParameters"].(map[string]interface{})[""].(string)
+	alpha.ConfigurationParameters[0].DbPort = final["componentInfo"].(map[string]interface{})["configurationParameters"].(map[string]interface{})[""].(string)
+	alpha.ConfigurationParameters[0].DbUser = final["componentInfo"].(map[string]interface{})["configurationParameters"].(map[string]interface{})[""].(string)
+
+	alpha.BehavioralProfile[0].Profile =  final["componentInfo"].(map[string]interface{})["behavioralProfile"].(map[string]interface{})[""].(string)
+	alpha.BehavioralProfile[0].Scalability =  final["componentInfo"].(map[string]interface{})["behavioralProfile"].(map[string]interface{})["scalability"].(string)
+
+	alpha.ExecutionRequirements[0].Memory = final["componentInfo"].(map[string]interface{})["executionRequirements"].(map[string]interface{})["memory"].(string)
+	alpha.ExecutionRequirements[0].Storage = final["componentInfo"].(map[string]interface{})["executionRequirements"].(map[string]interface{})["vcpu"].(string)
+	alpha.ExecutionRequirements[0].Vcpu = final["componentInfo"].(map[string]interface{})["executionRequirements"].(map[string]interface{})["storage"].(string)
+
+	alpha.ContainerParameters[0].DockerEnvironment = final["componentInfo"].(map[string]interface{})["containerParameters"].(map[string]interface{})["DockerEnvironment"].(string)
+	alpha.ContainerParameters[0].DockerExpose = final["componentInfo"].(map[string]interface{})["containerParameters"].(map[string]interface{})["DockerExpose"].(string)
+	alpha.ContainerParameters[0].DockerImage = final["componentInfo"].(map[string]interface{})["containerParameters"].(map[string]interface{})["DockerImage"].(string)
+
 }
 
 func (c *ComponentInfo) GetMetrics() ([]Metrics) {
