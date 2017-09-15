@@ -95,7 +95,7 @@ type ContainerParameters struct {
 }
 
 func main() {
-	url := "http://arcadia-sc.euprojects.net/api/v1/node/10/config"
+	url := "http://arcadia-sc.euprojects.net/api/v1/node/11/config"
 	fmt.Println("URL:>", url)
 
 	usr, err := user.Current()
@@ -104,7 +104,7 @@ func main() {
 
 	}
 
-	nid := "15750035-3e0e"
+	nid := "5c867086-7f3b"
 	arrNid := []byte(nid)
 	publicKey := util.GetPublicKeyPem(usr.HomeDir + "/Dropbox/ubitech/input_arcadia/agent_golang/authorized_keys")
 	uEnc, err := util.RsaEncrypt(publicKey, arrNid)
