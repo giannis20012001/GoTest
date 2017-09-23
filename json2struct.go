@@ -10,92 +10,56 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	_"strings"
+	"strings"
 	"os/user"
 	"bytes"
-	_"strconv"
 	"io/ioutil"
 	"github.com/giannis20012001/GoTest/util"
 	b64 "encoding/base64"
 
-	"strings"
-	"strconv"
 )
 
 type Response struct {
 	Code         string `json:"code"`
 	Message      string `json:"message"`
-	ReturnObject []ReturnObject `json:"returnobject"`
+	ReturnObject ReturnObject `json:"returnobject"`
 }
 
 type ReturnObject struct {
-	GroundInfo []GroundInfo`json:"groundInfo"`
-	ComponentInfo []ComponentInfo `json:"componentInfo"`
+	GroundInfo GroundInfo`json:"groundInfo"`
+	ComponentInfo ComponentInfo `json:"componentInfo"`
 }
 
 type GroundInfo struct {
-	PublicIP         string `json:"publicIP"`
-	PrivateIP        string `json:"privateIP"`
-	AgentPort        string `json:"agentPort"`
-	OrchestratorIP   string `json:"orchestratorIP"`
-	OrchestratorPort string `json:"orchestratorPort"`
-	GNID             string `json:"GNID"`
-	GSGID            string `json:"GSGID"`
-	CNID             string `json:"CNID"`
-	NID              string `json:"NID"`
+	PublicIP         string `json:"publicIP,omitempty"`
+	PrivateIP        string `json:"privateIP,omitempty"`
+	AgentPort        string `json:"agentPort,omitempty"`
+	OrchestratorIP   string `json:"orchestratorIP,omitempty"`
+	OrchestratorPort string `json:"orchestratorPort,omitempty"`
+	GNID             string `json:"GNID,omitempty"`
+	GSGID            string `json:"GSGID,omitempty"`
+	CNID             string `json:"CNID,omitempty"`
+	NID              string `json:"NID,omitempty"`
 }
 
 type ComponentInfo struct {
 	ClassName string `json:"className"`
 	CNID	string `json:"CNID"`
 	NativeComponent bool   `json:"nativeComponent"`
-	DependencyResolutionHandlers []DependencyResolutionHandlers `json:"dependencyResolutionHandlers"`
-	DependencyBindingHandlers []DependencyBindingHandlers `json:"dependencyBindingHandlers"`
-	Metrics []Metrics `json:"metrics"`
-	ConfigurationParameters []ConfigurationParameters `json:"configurationParameters"`
-	BehavioralProfile []BehavioralProfile`json:"behavioralProfile"`
-	ExecutionRequirements []ExecutionRequirements `json:"executionRequirements"`
-	ContainerParameters []ContainerParameters `json:"containerParameters"`
-}
-
-type DependencyResolutionHandlers struct {
-	BindedRootComponent string `json:"bindedRootComponent"`
-}
-
-type DependencyBindingHandlers struct {}
-
-type Metrics struct {
-	Connections   string `json:"Connections"`
-	BytesReceived string `json:"Bytes_received"`
-	BytesSent     string `json:"Bytes_sent"`
-}
-
-type ConfigurationParameters struct {
-	DbUser     string `json:"db_user"`
-	DbPort     string `json:"db_port"`
-	DbHost     string `json:"db_host"`
-	DbPassword string `json:"db_password"`
-}
-
-type BehavioralProfile struct {
-	Scalability string `json:"scalability"`
-	Profile     string `json:"profile"`
-}
-
-type ExecutionRequirements struct {
-	Memory  string `json:"memory"`
-	Vcpu    string `json:"vcpu"`
-	Storage string `json:"storage"`
-}
-
-type ContainerParameters struct {
-	DockerEnvironment string `json:"DockerEnvironment"`
-	DockerExpose      string `json:"DockerExpose"`
-	DockerImage       string `json:"DockerImage"`
+	LifecycleInitMethod string `json:"omitempty"`
+	LifecycleStartMethod string `json:"omitempty"`
+	LifecycleStopMethod string `json:"omitempty"`
+	DependencyResolutionHandlers map[string][]string `json:"dependencyResolutionHandlers,omitempty"`
+	DependencyBindingHandlers map[string][]string `json:"dependencyBindingHandlers,omitempty"`
+	Metrics map[string][]string `json:"metrics,omitempty"`
+	ConfigurationParameters map[string][]string `json:"configurationParameters,omitempty"`
+	BehavioralProfile map[string][]string `json:"behavioralProfile,omitempty"`
+	ExecutionRequirements map[string][]string `json:"executionRequirements,omitempty"`
+	ContainerParameters map[string][]string `json:"containerParameters,omitempty"`
 }
 
 func main() {
-	url := "http://arcadia-sc.euprojects.net/api/v1/node/17/config"
+	url := "http://arcadia-sc.euprojects.net/api/v1/node/50/config"
 	fmt.Println("URL:>", url)
 
 	usr, err := user.Current()
@@ -104,7 +68,7 @@ func main() {
 
 	}
 
-	nid := "92562d0d-6589"
+	nid := "d975cfe6-8aff"
 	arrNid := []byte(nid)
 	publicKey := util.GetPublicKeyPem(usr.HomeDir + "/Dropbox/ubitech/input_arcadia/agent_golang/authorized_keys")
 	uEnc, err := util.RsaEncrypt(publicKey, arrNid)
@@ -185,37 +149,73 @@ func main() {
 	beta := new(ComponentInfo)
 	beta.ClassName = final["componentInfo"].(map[string]interface{})["className"].(string)
 	beta.CNID = final["componentInfo"].(map[string]interface{})["CNID"].(string)
-	beta.NativeComponent, _ = strconv.ParseBool(final["nativeComponent"].(map[string]interface{})["publicIP"].(string))
-	//beta.DependencyResolutionHandlers[0]
-	//beta.DependencyBindingHandlers[0]
-	beta.Metrics[0].BytesReceived = final["componentInfo"].(map[string]interface{})["metrics"].(map[string]interface{})["Bytes_received"].(string)
-	beta.Metrics[0].BytesSent = final["componentInfo"].(map[string]interface{})["metrics"].(map[string]interface{})["Bytes_sent"].(string)
-	beta.Metrics[0].Connections = final["componentInfo"].(map[string]interface{})["metrics"].(map[string]interface{})["Connections"].(string)
+	beta.NativeComponent = final["componentInfo"].(map[string]interface{})["nativeComponent"].(bool)
+	//==================================================================================================================
+	//==================================================================================================================
 
-	beta.ConfigurationParameters[0].DbHost = final["componentInfo"].(map[string]interface{})["configurationParameters"].(map[string]interface{})[""].(string)
-	beta.ConfigurationParameters[0].DbPassword = final["componentInfo"].(map[string]interface{})["configurationParameters"].(map[string]interface{})[""].(string)
-	beta.ConfigurationParameters[0].DbPort = final["componentInfo"].(map[string]interface{})["configurationParameters"].(map[string]interface{})[""].(string)
-	beta.ConfigurationParameters[0].DbUser = final["componentInfo"].(map[string]interface{})["configurationParameters"].(map[string]interface{})[""].(string)
+	//beta.DependencyResolutionHandlers
+	m := final["componentInfo"].(map[string]interface{})["dependencyResolutionHandlers"]
+	temp := make(map[string][]string)
+	beta.DependencyResolutionHandlers = temp
+	for k, v := range m.(map[string]interface{}) {
+		beta.DependencyResolutionHandlers[k] = append(beta.DependencyResolutionHandlers[k], v.(string))
 
-	beta.BehavioralProfile[0].Profile =  final["componentInfo"].(map[string]interface{})["behavioralProfile"].(map[string]interface{})[""].(string)
-	beta.BehavioralProfile[0].Scalability =  final["componentInfo"].(map[string]interface{})["behavioralProfile"].(map[string]interface{})["scalability"].(string)
+	}
 
-	beta.ExecutionRequirements[0].Memory = final["componentInfo"].(map[string]interface{})["executionRequirements"].(map[string]interface{})["memory"].(string)
-	beta.ExecutionRequirements[0].Storage = final["componentInfo"].(map[string]interface{})["executionRequirements"].(map[string]interface{})["vcpu"].(string)
-	beta.ExecutionRequirements[0].Vcpu = final["componentInfo"].(map[string]interface{})["executionRequirements"].(map[string]interface{})["storage"].(string)
+	//beta.DependencyBindingHandlers
+	m = final["componentInfo"].(map[string]interface{})["dependencyBindingHandlers"]
+	temp = make(map[string][]string)
+	beta.DependencyBindingHandlers = temp
+	for k, v := range m.(map[string]interface{}) {
+		beta.DependencyBindingHandlers[k] = append(beta.DependencyBindingHandlers[k], v.(string))
 
-	beta.ContainerParameters[0].DockerEnvironment = final["componentInfo"].(map[string]interface{})["containerParameters"].(map[string]interface{})["DockerEnvironment"].(string)
-	beta.ContainerParameters[0].DockerExpose = final["componentInfo"].(map[string]interface{})["containerParameters"].(map[string]interface{})["DockerExpose"].(string)
-	beta.ContainerParameters[0].DockerImage = final["componentInfo"].(map[string]interface{})["containerParameters"].(map[string]interface{})["DockerImage"].(string)
+	}
 
-}
+	//beta.Metrics
+	m = final["componentInfo"].(map[string]interface{})["metrics"]
+	temp = make(map[string][]string)
+	beta.Metrics = temp
+	for k, v := range m.(map[string]interface{}) {
+		beta.Metrics[k] = append(beta.Metrics[k], v.(string))
 
-func (c *ComponentInfo) GetMetrics() ([]Metrics) {
-	return c.Metrics
+	}
 
-}
+	//beta.ConfigurationParameters
+	m = final["componentInfo"].(map[string]interface{})["configurationParameters"]
+	temp = make(map[string][]string)
+	beta.ConfigurationParameters = temp
+	for k, v := range m.(map[string]interface{}) {
+		beta.ConfigurationParameters[k] = append(beta.Metrics[k], v.(string))
 
-func (c *ComponentInfo) AddMetric(metric string) {
-	c.Metrics[0].BytesReceived = metric
+	}
+
+	//beta.BehavioralProfile
+	m = final["componentInfo"].(map[string]interface{})["behavioralProfile"]
+	temp = make(map[string][]string)
+	beta.BehavioralProfile = temp
+	for k, v := range m.(map[string]interface{}) {
+		beta.BehavioralProfile[k] = append(beta.BehavioralProfile[k], v.(string))
+
+	}
+
+	//beta.ExecutionRequirements
+	m = final["componentInfo"].(map[string]interface{})["executionRequirements"]
+	temp = make(map[string][]string)
+	beta.ExecutionRequirements = temp
+	for k, v := range m.(map[string]interface{}) {
+		beta.ExecutionRequirements[k] = append(beta.ExecutionRequirements[k], v.(string))
+
+	}
+
+	//beta.ContainerParameters
+	m = final["componentInfo"].(map[string]interface{})["containerParameters"]
+	temp = make(map[string][]string)
+	beta.ContainerParameters = temp
+	for k, v := range m.(map[string]interface{}) {
+		beta.ContainerParameters[k] = append(beta.ContainerParameters[k], v.(string))
+
+	}
+
+	fmt.Println(beta)
 
 }
