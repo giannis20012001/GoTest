@@ -59,7 +59,7 @@ type ComponentInfo struct {
 }
 
 func main() {
-	url := "http://arcadia-sc.euprojects.net/api/v1/node/56/config"
+	url := "http://arcadia-sc.euprojects.net/api/v1/node/61/config"
 	fmt.Println("URL:>", url)
 
 	usr, err := user.Current()
