@@ -25,7 +25,8 @@ func main() {
 		fmt.Println("Too far away")
 	}
 
-	time.Sleep(3000 * time.Millisecond)
+	//time.Sleep(3000 * time.Millisecond)
+	time.Sleep(30 * time.Second)
 	fmt.Println("Just woke up")
 
 }
