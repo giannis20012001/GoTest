@@ -15,6 +15,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/shirou/gopsutil/mem"
 	"github.com/shirou/gopsutil/host"
+	"github.com/shirou/gopsutil/load"
 
 )
 
@@ -83,7 +84,7 @@ func GetTotalMem(w http.ResponseWriter, r *http.Request) {
 
 	v, _ := mem.VirtualMemory()
 	//Return total RAM in Mega bytes
-	if err := json.NewEncoder(w).Encode(strconv.Itoa(int(v.Total ) / 1000000)); err != nil {
+	if err := json.NewEncoder(w).Encode(strconv.Itoa(int(v.Total) / 1048576)); err != nil {
 		panic(err)
 
 	}
@@ -97,7 +98,7 @@ func GetFreeMem(w http.ResponseWriter, r *http.Request) {
 
 	v, _ := mem.VirtualMemory()
 	//Return free RAM in Mega bytes
-	if err := json.NewEncoder(w).Encode(strconv.Itoa(int(v.Free) / 1000000)); err != nil {
+	if err := json.NewEncoder(w).Encode(strconv.Itoa(int(v.Free) / 1048576)); err != nil {
 		panic(err)
 
 	}
@@ -110,7 +111,7 @@ func GetUsedMem(w http.ResponseWriter, r *http.Request) {
 
 	v, _ := mem.VirtualMemory()
 	//Return used RAM in Mega bytes
-	if err := json.NewEncoder(w).Encode(strconv.Itoa(int(v.Used) / 1000000)); err != nil {
+	if err := json.NewEncoder(w).Encode(strconv.Itoa(int(v.Used) / 1048576)); err != nil {
 		panic(err)
 
 	}
@@ -123,8 +124,8 @@ func GetFreeMemPercentage(w http.ResponseWriter, r *http.Request) {
 
 	v, _ := mem.VirtualMemory()
 	//Return free RAM in percentage
-	freepercentage := ((int(v.Free) / 1000000) * 100) / (int(v.Total) / 1000000)
-	if err := json.NewEncoder(w).Encode(strconv.Itoa(freepercentage)); err != nil {
+	freepercentage := ((float64(v.Free) / 1048576) * 100) / (float64(v.Total) / 1048576)
+	if err := json.NewEncoder(w).Encode(strconv.FormatFloat(freepercentage, 'f', 5, 64)); err != nil {
 		panic(err)
 
 	}
@@ -137,7 +138,7 @@ func GetUsedMemPercentage(w http.ResponseWriter, r *http.Request) {
 
 	v, _ := mem.VirtualMemory()
 	//Return used RAM in percentage
-	if err := json.NewEncoder(w).Encode(strconv.Itoa(int(v.UsedPercent))); err != nil {
+	if err := json.NewEncoder(w).Encode(strconv.FormatFloat(v.UsedPercent, 'f', 5, 64)); err != nil {
 		panic(err)
 
 	}
@@ -149,7 +150,7 @@ func GetUptime(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	v, _ := host.Info()
-	//Return upTime in .......
+	//Return upTime in milliseconds
 	if err := json.NewEncoder(w).Encode(strconv.Itoa(int(v.Uptime))); err != nil {
 		panic(err)
 
@@ -161,9 +162,9 @@ func GetCpuLoad(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	v, _ := host.Info()
-	//Return upTime in .......
-	if err := json.NewEncoder(w).Encode(strconv.Itoa(int(v.Procs))); err != nil {
+	v, _ := load.Avg()
+	//Return CPU loaf in percentage
+	if err := json.NewEncoder(w).Encode(strconv.FormatFloat(v.Load1 * 100, 'f', 0, 64)); err != nil {
 		panic(err)
 
 	}
