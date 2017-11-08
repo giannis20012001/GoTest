@@ -1,4 +1,4 @@
-package main
+package restserver
 
 /**
  * Created by John Tsantilis
