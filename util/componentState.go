@@ -1,4 +1,4 @@
-package main
+package util
 
 /**
  * Created by John Tsantilis (A.K.A lumi) on 18/1/2018.
