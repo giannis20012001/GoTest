@@ -27,18 +27,27 @@ func init() {
 
 func main() {
 	channel := make(chan util.ComponentState)// create channel
-	cs := util.NewComponentState("BOOTSTRAPPED")
+	//startMetrics := make(chan bool)
 
 	WaitGroup.Add(1)
 	go stompServer(channel) // run this in a separate goroutine
 	WaitGroup.Add(1)
 	go restServer()
-	WaitGroup.Add(1)
-	go allowCustomMetrics(channel)
-	WaitGroup.Add(1)
-	go sendMetricsToStompServer(channel)
 
-	channel <- *cs
+	for {
+		select {
+		case msg := <-channel:
+			if msg.GetState() == "STARTED" {
+				WaitGroup.Add(1)
+				go allowCustomMetrics()
+				WaitGroup.Add(1)
+				go sendMetricsToStompServer()
+
+			}
+
+		}
+
+	}
 
 	WaitGroup.Wait()
 
@@ -48,45 +57,59 @@ func main() {
 func stompServer(channel chan util.ComponentState) {
 	defer WaitGroup.Done()
 
-	cs := <- channel
-	for i:=1; i < 20; i++{
-		fmt.Println("Getting stuff from STOMP server......")
-
+	//cs := <- channel
+	cs := util.NewComponentStateEmpty()
+	i:= 1
+	for {
 		switch i {
-			case 1:
-				cs.SetState("INITIALIZED")
-				channel <- cs
-				fmt.Println("State is set to: " + cs.GetState()) //INITIALIZED
-			case 2:
-				cs.SetState("DEPLOYED")
-				channel <- cs
-				fmt.Println("State is set to: " + cs.GetState()) //DEPLOYED
-			case 3:
-				cs.SetState("BLOCKED")
-				channel <- cs
-				fmt.Println("State is set to: " + cs.GetState()) //BLOCKED
-			case 4:
-				cs.SetState("STARTED")
-				channel <- cs
-				fmt.Println("State is set to: " + cs.GetState()) //STARTED
-			case 5:
-				cs.SetState("STOPPED")
-				channel <- cs
-				fmt.Println("State is set to: " + cs.GetState()) //STOPPED
-			case 6:
-				cs.SetState("UNDEPLOYED")
-				channel <- cs
-				fmt.Println("State is set to: " + cs.GetState()) //UNDEPLOYED
-			case 7:
-				cs.SetState("ERRONEOUS")
-				channel <- cs
-				fmt.Println("State is set to: " + cs.GetState()) //ERRONEOUS
-			case 8:
-				cs.SetState("CHAINED")
-				channel <- cs
-				fmt.Println("State is set to: " + cs.GetState()) //CHAINED
-			default:
-				fmt.Println("State is set to: " + cs.GetState())
+		case 1:
+			cs.SetState("BOOTSTRAPPED")
+			channel <- *cs
+			fmt.Println("Getting stuff from STOMP server......")
+			fmt.Println("State is set to: " + cs.GetState()) //BOOTSTRAPPED
+		case 2:
+			cs.SetState("INITIALIZED")
+			channel <- *cs
+			fmt.Println("Getting stuff from STOMP server......")
+			fmt.Println("State is set to: " + cs.GetState()) //INITIALIZED
+		case 3:
+			cs.SetState("DEPLOYED")
+			channel <- *cs
+			fmt.Println("Getting stuff from STOMP server......")
+			fmt.Println("State is set to: " + cs.GetState()) //DEPLOYED
+		case 4:
+			cs.SetState("BLOCKED")
+			channel <- *cs
+			fmt.Println("Getting stuff from STOMP server......")
+			fmt.Println("State is set to: " + cs.GetState()) //BLOCKED
+		case 5:
+			cs.SetState("STARTED")
+			channel <- *cs
+			fmt.Println("Getting stuff from STOMP server......")
+			fmt.Println("State is set to: " + cs.GetState()) //STARTED
+		case 6:
+			cs.SetState("STOPPED")
+			channel <- *cs
+			fmt.Println("Getting stuff from STOMP server......")
+			fmt.Println("State is set to: " + cs.GetState()) //STOPPED
+		case 7:
+			cs.SetState("UNDEPLOYED")
+			channel <- *cs
+			fmt.Println("Getting stuff from STOMP server......")
+			fmt.Println("State is set to: " + cs.GetState()) //UNDEPLOYED
+		case 8:
+			cs.SetState("ERRONEOUS")
+			channel <- *cs
+			fmt.Println("Getting stuff from STOMP server......")
+			fmt.Println("State is set to: " + cs.GetState()) //ERRONEOUS
+		case 9:
+			cs.SetState("CHAINED")
+			channel <- *cs
+			fmt.Println("Getting stuff from STOMP server......")
+			fmt.Println("State is set to: " + cs.GetState()) //CHAINED
+		default:
+			//fmt.Println("State is set to: " + cs.GetState())
+			//Do nothing
 
 		}
 
@@ -94,9 +117,41 @@ func stompServer(channel chan util.ComponentState) {
 		time.Sleep(time.Duration(5000) * time.Microsecond)
 		//time.Sleep(500 * time.Millisecond)
 
+		i++
+
 	}
 
 	close(channel)
+
+}
+
+//Reads from Channel
+func sendMetricsToStompServer() {
+	defer WaitGroup.Done()
+
+	for  {
+		fmt.Println("Sending stuff to STOMP server......")
+		if !BLOCK_CUSTOM_METRICS {
+			fmt.Println("Sending extra stuff to STOMP server......")
+
+		}
+
+		r := rand.Intn(5000000-1) + 1
+		//r := rand.New(rand.NewSource(time.Now().UnixNano()))
+		time.Sleep(time.Duration(r) * time.Microsecond)
+		//time.Sleep(500 * time.Millisecond)
+
+	}
+
+}
+
+//Reads from Channel
+func allowCustomMetrics() {
+	defer WaitGroup.Done()
+	fmt.Println("Executing allowCustomMetrics()......")
+	time.Sleep(60 * time.Second)
+	BLOCK_CUSTOM_METRICS = false
+	fmt.Printf("BLOCK_CUSTOM_METRICS: %t\n", BLOCK_CUSTOM_METRICS)
 
 }
 
@@ -110,44 +165,6 @@ func restServer() {
 		//r := rand.New(rand.NewSource(time.Now().UnixNano()))
 		time.Sleep(time.Duration(r) * time.Microsecond)
 		//time.Sleep(500 * time.Millisecond)
-
-	}
-
-}
-
-//Reads from Channel
-func allowCustomMetrics(channel <-chan util.ComponentState) {
-	defer WaitGroup.Done()
-
-	cs := <-channel
-	if cs.GetState() == "STARTED" {
-		fmt.Println("Executing allowCustomMetrics()......")
-		time.Sleep(60 * time.Second)
-		BLOCK_CUSTOM_METRICS = false
-
-	}
-
-}
-
-//Reads from Channel
-func sendMetricsToStompServer(channel <-chan util.ComponentState) {
-	defer WaitGroup.Done()
-
-	cs := <- channel
-	for  {
-		if cs.GetState() == "STARTED" {
-			fmt.Println("Sending stuff to STOMP server......")
-			if !BLOCK_CUSTOM_METRICS {
-				fmt.Println("Sending extra stuff to STOMP server......")
-
-			}
-
-			r := rand.Intn(500-0) + 0
-			//r := rand.New(rand.NewSource(time.Now().UnixNano()))
-			time.Sleep(time.Duration(r) * time.Microsecond)
-			//time.Sleep(500 * time.Millisecond)
-
-		}
 
 	}
 
